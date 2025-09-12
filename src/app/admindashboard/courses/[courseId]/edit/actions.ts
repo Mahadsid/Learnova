@@ -6,6 +6,7 @@ import { prisma } from "@/lib/db";
 import { ApiResponse } from "@/lib/types";
 import { courseSchema, CourseSchemaType } from "@/lib/ZodSchema";
 import { request } from "@arcjet/next";
+import { revalidatePath } from "next/cache";
 
 
 // securing api with arcjet, configurating it
@@ -79,6 +80,75 @@ export async function editCourse(data: CourseSchemaType, courseId: string): Prom
         return {
             status: "error",
             message: "Failed to update course."
+        }
+    }
+}
+
+
+// server action to update in database for reordering lessons , and maintaining their positions in DB
+export async function reorderLessons(chapterId: string, lessons: { id: string; position: number }[], courseId: string): Promise<ApiResponse> {
+    // user should only be admin, bcz we give admin oly privilage to make course so only admin can edit course 
+    await requireAdmin();
+    try {
+        if (!lessons || lessons.length === 0) {
+            return {
+                status: "error",
+                message: "No lessons provided for reordering",
+            };
+        }
+        const updates = lessons.map((lesson) => prisma.lesson.update({
+            where: {
+                id: lesson.id,
+                chapterId: chapterId,
+            },
+            data: {
+                position: lesson.position,
+            }
+        }));
+        await prisma.$transaction(updates);
+        revalidatePath(`/admindashboard/courses/${courseId}/edit`);
+        return {
+            status: "success",
+            message: "Lesson reordered successfully.",
+        }
+    } catch {
+        return {
+            status: 'error',
+            message: 'Failed to reorder lessons.'
+        }
+    }
+}
+
+// Server action to to update in database for reordering chapters , and maintaining their positions in DB
+export async function reorderChapters(courseId: string, chapters: { id: string; position: number }[]): Promise<ApiResponse> {
+    // user should only be admin, bcz we give admin oly privilage to make course so only admin can edit course 
+    await requireAdmin();
+    try {
+        if (!chapters || chapters.length === 0) {
+            return {
+                status: "error",
+                message: "No chapters provided for reordering."
+            };
+        }
+        const updates = chapters.map((chapter) => prisma.chapter.update({
+            where: {
+                id: chapter.id,
+                courseId: courseId,
+            },
+            data: {
+                position: chapter.position,
+            },
+        }));
+        await prisma.$transaction(updates);
+        revalidatePath(`/admindashboard/courses/${courseId}/edit`);
+        return {
+            status: "success",
+            message: "Chapters reordered successfully.",
+        }
+    } catch {
+        return {
+            status: "error",
+            message: "Failed to reorder chapters.",
         }
     }
 }
