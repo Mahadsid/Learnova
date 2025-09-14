@@ -12,6 +12,7 @@ export default function AdminLayout({ children }: {
     children: ReactNode
 }) {
     return (
+      <>
         <SidebarProvider
       style={
         {
@@ -32,5 +33,6 @@ export default function AdminLayout({ children }: {
         </div>
       </SidebarInset>
     </SidebarProvider>
+      </>
     )
 }

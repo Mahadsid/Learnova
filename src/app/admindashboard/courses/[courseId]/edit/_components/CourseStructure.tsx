@@ -8,11 +8,16 @@ import {CSS} from '@dnd-kit/utilities';
 import { AdminCourseSingularType } from "@/app/dataAcclyr/admin/admin-get-course";
 import { cn } from "@/lib/utils";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronDown, ChevronRight, Delete, FileText, GripVertical, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronRight, FileText, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { toast } from "sonner";
 import { reorderChapters, reorderLessons } from "../actions";
+import { NewChapterModal } from "./NewChapterModal";
+import { NewLessonModal } from "./NewLessonModal";
+import { DeleteLesson } from "./DeleteLesson";
+import { DeleteChapter } from "./DeleteChapter";
+
 
 
 
@@ -250,6 +255,7 @@ export function CourseStructure({ data }: iAppProps) {
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between border-b border-border">
                     <CardTitle>Chapters</CardTitle>
+                    <NewChapterModal courseId={data.id} />
                 </CardHeader>
                 <CardContent className="space-y-8">
                         <SortableContext strategy={verticalListSortingStrategy} items={items}>
@@ -270,9 +276,7 @@ export function CourseStructure({ data }: iAppProps) {
                                                         </CollapsibleTrigger>
                                                         <p className="cursor-pointer hover:text-primary pl-2">{ item.title }</p>
                                                     </div>
-                                                    <Button size="icon" variant="outline">
-                                                        <Trash2 className="size-4"/>
-                                                    </Button>
+                                                    <DeleteChapter chapterId={ item.id } courseId={data.id} />
                                                 </div>
                                                 <CollapsibleContent>
                                                     <div className="p-1">
@@ -287,18 +291,14 @@ export function CourseStructure({ data }: iAppProps) {
                                                                                 <FileText className="size-4" />
                                                                                 <Link href={`/admindashboard/courses/${data.id}/${item.id}/${lesson.id}`}>{ lesson.title }</Link>
                                                                             </div>
-                                                                            <Button variant="outline" size="icon">
-                                                                                <Trash2 className="size-4"/>
-                                                                            </Button>
+                                                                            <DeleteLesson chapterId={item.id} courseId={data.id} lessonId={lesson.id} />
                                                                         </div>
                                                                     )}
                                                                 </SortableItem>
                                                             ))}
                                                         </SortableContext>
                                                         <div className="p-2">
-                                                            <Button variant="outline" className="w-full">
-                                                                Create New Lesson
-                                                            </Button>
+                                                            <NewLessonModal chapterId={item.id} courseId={data.id} />
                                                         </div>
                                                     </div>
                                                 </CollapsibleContent>

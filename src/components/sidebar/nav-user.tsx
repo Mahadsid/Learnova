@@ -34,8 +34,8 @@ import { useSignOut } from "@/hooks/use-signout"
 export function NavUser() {
   const { isMobile } = useSidebar()
   const { data: session, isPending } = authClient.useSession()
-  if (isPending) { return null }
   const handleSignOut = useSignOut()
+  if (isPending) { return null }
 
   return (
     <SidebarMenu>
