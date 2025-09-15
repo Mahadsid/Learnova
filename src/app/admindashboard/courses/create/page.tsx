@@ -19,6 +19,7 @@ import { tryCatch } from "@/hooks/try-catch";
 import { CreateCourse } from "./actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import {  useConfetti } from "@/hooks/use-confetti";
 
 
 
@@ -27,7 +28,8 @@ import { useRouter } from "next/navigation";
 export default function CourseCreationPage() {
 
     const [isPending, startTransition] = useTransition();
-    const router = useRouter()
+    const router = useRouter();
+    const { triggerConfetti } = useConfetti();
     
     //1. make form using zod, & define initial values: {from zod docs}
     const form = useForm<CourseSchemaType>({
@@ -61,6 +63,7 @@ export default function CourseCreationPage() {
 
             if (result.status === "success") {
                 toast.success(result.message);
+                triggerConfetti();
                 form.reset()
                 //since this is client side we use useRouter from and for navigation.
                 router.push('/admindashboard/courses')

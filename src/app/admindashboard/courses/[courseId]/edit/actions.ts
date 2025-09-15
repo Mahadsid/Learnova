@@ -434,7 +434,7 @@ export async function deleteChapter({ chapterId, courseId }: { chapterId: string
     } catch {
         return {
             status: "error",
-            message: "Failed to delete chapter Or chapter still have lessons."
+            message: "Failed to delete chapter."
         }
     }
 }
