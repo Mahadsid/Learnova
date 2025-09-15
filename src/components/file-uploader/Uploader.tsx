@@ -29,9 +29,10 @@ interface UploaderState {
 interface iAppProps {
     value?: string;
     onChange?: (value: string) => void;
+    fileTypeAccepted: 'image' | 'video';
 }
 
-export function Uploader({ onChange, value }: iAppProps) {
+export function Uploader({ onChange, value, fileTypeAccepted }: iAppProps) {
     //since we need to display image in edit form in edit course, we need objectUrl, so need to constructURL which we will use or hook and use it here!
     const fileUrl = useConstructImageUrl(value || '')
 
@@ -42,115 +43,224 @@ export function Uploader({ onChange, value }: iAppProps) {
         uploading: false,
         progress: 0,
         isDeleting: false,
-        fileType: "image",
+        fileType: fileTypeAccepted,
         key: value,
-        objectUrl: fileUrl,
+        objectUrl: value ? fileUrl: undefined,
     });
 
-    async function uploadFile(file: File) {
-        setFileState((prev) => (
-            {
-                ...prev,
-                uploading: true,
-                progress: 0,
-            }
-        ))
+    const uploadFile = useCallback(
+        async (file: File) => {
+            setFileState((prev) => (
+                {
+                    ...prev,
+                    uploading: true,
+                    progress: 0,
+                }
+            ))
 
-        try {
-            // 1.get presigned url (from route we created for it before)
-            const presignedResponse = await fetch('/api/s3/upload', {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    //property name should match in the route.(check its route code)
-                    fileName: file.name,
-                    contentType: file.type,
-                    size: file.size,
-                    isImage: true,
-                }),
-            });
-            // defensive coding, checking if presigned url response failed
-            if (!presignedResponse.ok) {
-                toast.error("Failed to get presigned URL");
-                // so updating state according to failed 
+            try {
+                // 1.get presigned url (from route we created for it before)
+                const presignedResponse = await fetch('/api/s3/upload', {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        //property name should match in the route.(check its route code)
+                        fileName: file.name,
+                        contentType: file.type,
+                        size: file.size,
+                        isImage: fileTypeAccepted === 'image' ? true : false,
+                    }),
+                });
+                // defensive coding, checking if presigned url response failed
+                if (!presignedResponse.ok) {
+                    toast.error("Failed to get presigned URL");
+                    // so updating state according to failed 
+                    setFileState((prev) => (
+                        {
+                            ...prev,
+                            uploading: false,
+                            progress: 0,
+                            error: true,
+                        }));
+                    //do not continue, so also return it!
+                    return;
+                }
+
+                // so here presigned response is succesfull we get presigned url and a key bcz this is what we returned in route.
+                const { presignedUrl, key } = await presignedResponse.json();
+
+                // now we can use this presigned url to upload our file
+                // also we will use XMLHttpRequest (XHR), it is used to interact with servers, can extract data from URL without having to do full page refresh plus update part of webpage without disturbing what user is doing {this is what we need for tracking progress} ! fetch cannot do that, axios can do that but for only using here not using extra package.
+            
+                await new Promise<void>((resolve, reject) => {
+                    const xhr = new XMLHttpRequest();
+                    //we use it to listen events specifically onProgress envent!
+                    xhr.upload.onprogress = (event) => {
+                        // calc how much file is uploaded
+                        if (event.lengthComputable) {
+                            const percentageCompleted = (event.loaded / event.total) * 100
+                            //setting progress in state!
+                            setFileState((prev) => (
+                                {
+                                    ...prev,
+                                    progress: Math.round(percentageCompleted),
+                                }
+                            ));
+                        }
+                    }
+                    //checking if xhr was succesful in uploading file or not
+                    xhr.onload = () => {
+                        // 200 or 204 statuses means succesful
+                        if (xhr.status === 200 || 204) {
+                            setFileState((prev) => (
+                                {
+                                    ...prev,
+                                    progress: 100,
+                                    uploading: false, //file is not uploading anymore, i.e false
+                                    key: key,
+                                }
+                            ));
+
+                            //saving key, so for form onChange we save our key, (done later)
+                            onChange?.(key);
+
+                            toast.success("File uploaded successfully!")
+                            resolve()
+                        } else {
+                            reject(new Error('Upload failed!'))
+                        }
+                    };
+                    // when xhr not successful or error do this
+                    xhr.onerror = () => {
+                        reject(new Error("Upload Failed"));
+                    };
+                    //finally we can open/configure our request and send file, 1. arg = method is PUT 2.arg destination/server url
+                    xhr.open('PUT', presignedUrl);
+                    //content type for this request is our file type
+                    xhr.setRequestHeader("Content-Type", file.type);
+                    // sending request arg = body, & our body is file.
+                    xhr.send(file);
+                });
+            } catch {
+                toast.error('Something went wrong');
                 setFileState((prev) => (
                     {
                         ...prev,
                         uploading: false,
                         progress: 0,
                         error: true,
-                    }));
-                //do not continue, so also return it!
-                return;
+                    }
+                ));
             }
+        }, [fileTypeAccepted, onChange]
+    );
 
-            // so here presigned response is succesfull we get presigned url and a key bcz this is what we returned in route.
-            const { presignedUrl, key} = await presignedResponse.json();
 
-            // now we can use this presigned url to upload our file
-            // also we will use XMLHttpRequest (XHR), it is used to interact with servers, can extract data from URL without having to do full page refresh plus update part of webpage without disturbing what user is doing {this is what we need for tracking progress} ! fetch cannot do that, axios can do that but for only using here not using extra package.
+    //created new funvtion inside callback due to watning sam e code just inside callback
+    // async function uploadFile(file: File) {
+    //     setFileState((prev) => (
+    //         {
+    //             ...prev,
+    //             uploading: true,
+    //             progress: 0,
+    //         }
+    //     ))
+
+    //     try {
+    //         // 1.get presigned url (from route we created for it before)
+    //         const presignedResponse = await fetch('/api/s3/upload', {
+    //             method: "POST",
+    //             headers: { "Content-Type": "application/json" },
+    //             body: JSON.stringify({
+    //                 //property name should match in the route.(check its route code)
+    //                 fileName: file.name,
+    //                 contentType: file.type,
+    //                 size: file.size,
+    //                 isImage: fileTypeAccepted === 'image' ? true : false,
+    //             }),
+    //         });
+    //         // defensive coding, checking if presigned url response failed
+    //         if (!presignedResponse.ok) {
+    //             toast.error("Failed to get presigned URL");
+    //             // so updating state according to failed 
+    //             setFileState((prev) => (
+    //                 {
+    //                     ...prev,
+    //                     uploading: false,
+    //                     progress: 0,
+    //                     error: true,
+    //                 }));
+    //             //do not continue, so also return it!
+    //             return;
+    //         }
+
+    //         // so here presigned response is succesfull we get presigned url and a key bcz this is what we returned in route.
+    //         const { presignedUrl, key} = await presignedResponse.json();
+
+    //         // now we can use this presigned url to upload our file
+    //         // also we will use XMLHttpRequest (XHR), it is used to interact with servers, can extract data from URL without having to do full page refresh plus update part of webpage without disturbing what user is doing {this is what we need for tracking progress} ! fetch cannot do that, axios can do that but for only using here not using extra package.
             
-            await new Promise<void>((resolve, reject) => {
-                const xhr = new XMLHttpRequest();
-                //we use it to listen events specifically onProgress envent!
-                xhr.upload.onprogress = (event) => {
-                    // calc how much file is uploaded
-                    if (event.lengthComputable) {
-                        const percentageCompleted = (event.loaded / event.total) * 100
-                        //setting progress in state!
-                        setFileState((prev) => (
-                            {
-                                ...prev,
-                                progress: Math.round(percentageCompleted),
-                            }
-                        ));
-                    }
-                }
-                //checking if xhr was succesful in uploading file or not
-                xhr.onload = () => {
-                    // 200 or 204 statuses means succesful
-                    if (xhr.status === 200 || 204) {
-                        setFileState((prev) => (
-                            {
-                                ...prev,
-                                progress: 100,
-                                uploading: false, //file is not uploading anymore, i.e false
-                                key: key,
-                            }
-                        ));
+    //         await new Promise<void>((resolve, reject) => {
+    //             const xhr = new XMLHttpRequest();
+    //             //we use it to listen events specifically onProgress envent!
+    //             xhr.upload.onprogress = (event) => {
+    //                 // calc how much file is uploaded
+    //                 if (event.lengthComputable) {
+    //                     const percentageCompleted = (event.loaded / event.total) * 100
+    //                     //setting progress in state!
+    //                     setFileState((prev) => (
+    //                         {
+    //                             ...prev,
+    //                             progress: Math.round(percentageCompleted),
+    //                         }
+    //                     ));
+    //                 }
+    //             }
+    //             //checking if xhr was succesful in uploading file or not
+    //             xhr.onload = () => {
+    //                 // 200 or 204 statuses means succesful
+    //                 if (xhr.status === 200 || 204) {
+    //                     setFileState((prev) => (
+    //                         {
+    //                             ...prev,
+    //                             progress: 100,
+    //                             uploading: false, //file is not uploading anymore, i.e false
+    //                             key: key,
+    //                         }
+    //                     ));
 
-                        //saving key, so for form onChange we save our key, (done later)
-                        onChange?.(key);
+    //                     //saving key, so for form onChange we save our key, (done later)
+    //                     onChange?.(key);
 
-                        toast.success("File uploaded successfully!")
-                        resolve()
-                    } else {
-                        reject(new Error('Upload failed!'))
-                    }
-                };
-                // when xhr not successful or error do this
-                xhr.onerror = () => {
-                    reject(new Error("Upload Failed"));
-                };
-                //finally we can open/configure our request and send file, 1. arg = method is PUT 2.arg destination/server url
-                xhr.open('PUT', presignedUrl);
-                //content type for this request is our file type
-                xhr.setRequestHeader("Content-Type", file.type);
-                // sending request arg = body, & our body is file.
-                xhr.send(file);
-            });
-        } catch  {
-            toast.error('Something went wrong');
-            setFileState((prev) => (
-                {
-                    ...prev,
-                    uploading: false,
-                    progress: 0,
-                    error: true,
-                }
-            ));
-        }
-    }
+    //                     toast.success("File uploaded successfully!")
+    //                     resolve()
+    //                 } else {
+    //                     reject(new Error('Upload failed!'))
+    //                 }
+    //             };
+    //             // when xhr not successful or error do this
+    //             xhr.onerror = () => {
+    //                 reject(new Error("Upload Failed"));
+    //             };
+    //             //finally we can open/configure our request and send file, 1. arg = method is PUT 2.arg destination/server url
+    //             xhr.open('PUT', presignedUrl);
+    //             //content type for this request is our file type
+    //             xhr.setRequestHeader("Content-Type", file.type);
+    //             // sending request arg = body, & our body is file.
+    //             xhr.send(file);
+    //         });
+    //     } catch  {
+    //         toast.error('Something went wrong');
+    //         setFileState((prev) => (
+    //             {
+    //                 ...prev,
+    //                 uploading: false,
+    //                 progress: 0,
+    //                 error: true,
+    //             }
+    //         ));
+    //     }
+    // }
 
     const onDrop = useCallback((acceptedFiles : File[]) => {
         // Do something with the files
@@ -170,12 +280,12 @@ export function Uploader({ onChange, value }: iAppProps) {
                 error: false,
                 id: uuidv4(),
                 isDeleting: false,
-                fileType: "image",
+                fileType: fileTypeAccepted,
             });
             //calling upload file function & passinf the file we recieved!
             uploadFile(file);
         }
-    }, [fileState.objectUrl])
+    }, [fileState.objectUrl, uploadFile, fileTypeAccepted])
 
     // Also removing file or file cleanup
     async function handleRemoveFile() {
@@ -222,7 +332,7 @@ export function Uploader({ onChange, value }: iAppProps) {
                 progress: 0,
                 objectUrl: undefined,
                 error: false,
-                fileType: "image",
+                fileType: fileTypeAccepted,
                 id: null,
                 isDeleting: false,
             }));
@@ -260,7 +370,7 @@ export function Uploader({ onChange, value }: iAppProps) {
             return <RenderErrorState />
         }
         if (fileState.objectUrl) {
-            return <RenderUploadedState previewUrl={fileState.objectUrl} handleRemoveFile={handleRemoveFile} isDeleting={fileState.isDeleting} />
+            return <RenderUploadedState previewUrl={fileState.objectUrl} handleRemoveFile={handleRemoveFile} isDeleting={fileState.isDeleting} fileType={fileState.fileType} />
         }
         return <RenderEmptyState isDragActive={isDragActive} />
     } 
@@ -276,12 +386,11 @@ export function Uploader({ onChange, value }: iAppProps) {
     
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
-        accept: {
-            "image/*": []
-        },
+        accept: 
+            fileTypeAccepted === "video" ? {"video/*": []} : {"image/*": []},
         maxFiles: 1,
         multiple: false,
-        maxSize: 5 * 1024 * 1024, //5Mb
+        maxSize: fileTypeAccepted === 'image' ? 5 * 1024 * 1024 : 1000 * 1024 * 1024, //5Mb for image & 1Gb for video
         onDropRejected: rejectedFiles,
         //we disable since the dropzone or browse open automatically when we delete file, so need it to use disable property
         disabled: fileState.uploading || !!fileState.objectUrl, //the !! convert it to boolean since object url is string so we can work it out on condition

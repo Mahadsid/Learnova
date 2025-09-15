@@ -33,11 +33,17 @@ export function RenderErrorState() {
     )
 }
 
-export function RenderUploadedState({ previewUrl, isDeleting, handleRemoveFile }: { previewUrl: string; isDeleting: boolean; handleRemoveFile: () => void; }) {
+export function RenderUploadedState({ previewUrl, isDeleting, handleRemoveFile, fileType, }: { previewUrl: string; isDeleting: boolean; handleRemoveFile: () => void; fileType: "image" | "video"; }) {
     return (
-        <div>
-            <Image src={previewUrl} alt="Uploaded File" fill className="object-contain p-2
-            " />
+        <div className="relative group w-full h-full flex items-center justify-center">
+            {
+                fileType === 'video'
+                    ?
+                    <video src={previewUrl} controls className="rounded-md w-full h-full" />
+                    :
+                    (<Image src={previewUrl} alt="Uploaded File" fill className="object-contain p-2
+                    " />)
+            }
             <Button variant="destructive" size="icon" className={cn("absolute top-4 right-4")} onClick={handleRemoveFile} disabled={isDeleting}>
                 {
                     isDeleting
