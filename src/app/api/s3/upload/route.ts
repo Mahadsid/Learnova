@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import z from 'zod';
 import {getSignedUrl} from '@aws-sdk/s3-request-presigner'
 import { S3 } from '@/lib/S3Client';
-import arcjet, { detectBot, fixedWindow } from '@/lib/arcjet';
+import arcjet, { fixedWindow } from '@/lib/arcjet';
 import { requireAdmin } from '@/app/dataAcclyr/admin/require-admin';
 
 //for type safety we make schema
@@ -18,12 +18,14 @@ export const fileUploadSchema = z.object({
 })
 
 // securing api with arcjet, configurating it
-const aj = arcjet.withRule(
-    detectBot({
-        mode: "LIVE",
-        allow: [],
-    })
-).withRule(
+const aj = arcjet
+//     .withRule(
+//     detectBot({
+//         mode: "LIVE",
+//         allow: [],
+//     })
+// ) we-commented or can delete this bcz we implemented detectbot in middleware so it intercept bot at every request no need to deifne it here again! read docs to read docs see middleware.ts file more info there.
+    .withRule(
     fixedWindow({
         mode: "LIVE",
         window: "1m",

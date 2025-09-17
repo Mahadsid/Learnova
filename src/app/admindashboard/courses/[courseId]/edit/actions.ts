@@ -1,8 +1,7 @@
 "use server";
 
 import { requireAdmin } from "@/app/dataAcclyr/admin/require-admin";
-import { tryCatch } from "@/hooks/try-catch";
-import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
+import arcjet, { fixedWindow } from "@/lib/arcjet";
 import { prisma } from "@/lib/db";
 import { ApiResponse } from "@/lib/types";
 import { chapterSchema, ChapterSchemaType, courseSchema, CourseSchemaType, lessonSchema } from "@/lib/ZodSchema";
@@ -11,12 +10,14 @@ import { revalidatePath } from "next/cache";
 
 
 // securing api with arcjet, configurating it
-const aj = arcjet.withRule(
-    detectBot({
-        mode: "LIVE",
-        allow: [],
-    })
-).withRule(
+const aj = arcjet
+// .withRule(
+//     detectBot({
+//         mode: "LIVE",
+//         allow: [],
+//     })
+// )we-commented or can delete this bcz we implemented detectbot in middleware so it intercept bot at every request no need to deifne it here again! read docs to read docs see middleware.ts file more info there.
+.withRule(
     fixedWindow({
         mode: "LIVE",
         window: "1m",

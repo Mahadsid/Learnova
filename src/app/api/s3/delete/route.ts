@@ -1,5 +1,5 @@
 import { requireAdmin } from "@/app/dataAcclyr/admin/require-admin";
-import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
+import arcjet, { fixedWindow } from "@/lib/arcjet";
 import { env } from "@/lib/env";
 import { S3 } from "@/lib/S3Client";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
@@ -7,12 +7,14 @@ import { NextResponse } from "next/server";
 
 
 // securing api with arcjet, configurating it
-const aj = arcjet.withRule(
-    detectBot({
-        mode: "LIVE",
-        allow: [],
-    })
-).withRule(
+const aj = arcjet
+//     .withRule(
+//     detectBot({
+//         mode: "LIVE",
+//         allow: [],
+//     })
+// ) we-commented or can delete this bcz we implemented detectbot in middleware so it intercept bot at every request no need to deifne it here again! read docs to read docs see middleware.ts file more info there.
+    .withRule(
     fixedWindow({
         mode: "LIVE",
         window: "1m",
