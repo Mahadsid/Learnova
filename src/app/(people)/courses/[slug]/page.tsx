@@ -1,7 +1,6 @@
 import { getIndividualCourse } from "@/app/dataAcclyr/course/get-course";
 import { RenderDescription } from "@/components/rich-text-editor/RenderDescription";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Separator } from "@/components/ui/separator";
@@ -9,6 +8,10 @@ import { env } from "@/lib/env";
 import { IconBook, IconCategory, IconChartBar, IconChevronDown, IconClock, IconPlayerPlay } from "@tabler/icons-react";
 import { CheckIcon } from "lucide-react";
 import Image from "next/image";
+import { checkIfCourseBought } from "@/app/dataAcclyr/user/user-is-enrolled";
+import Link from "next/link";
+import { EnrollmentButton } from "./_components/EnrollmentButton";
+import { buttonVariants } from "@/components/ui/button";
 
 
 //To get the data we created data acc lyr, but we need to find the slug from the URL to find in DB, so we need to get Slug from params and pass it to dataacclyr then we can get our course data. & MAKE SURE the name in {name} matches the folder name [name]
@@ -20,6 +23,8 @@ export default async function SlugPage({ params }: { params: Params }) {
     const { slug } = await params;
     //pass this slug to get our course data
     const course = await getIndividualCourse(slug);
+
+    const isEnrolled = await checkIfCourseBought(course.id);
 
     // const thumbnailUrl = useConstructImageUrl(course.fileKey); since this function cannot work in async function we directly copy the URL from the file and paste it in src! other way is to create a new component and reder it here.
 
@@ -212,9 +217,15 @@ export default async function SlugPage({ params }: { params: Params }) {
                                 </ul>
                             </div>
                             {/* enrollement button */}
-                            <Button className="w-full">
-                                Buy Now!
-                            </Button>
+                            {isEnrolled
+                                ?
+                                (<Link href="/dashboard" className={buttonVariants({className: "w-full"})}>
+                                    Watch Course
+                                </Link>)
+                                :
+                                <EnrollmentButton courseId={ course.id } />
+                                }
+                                
                             <p className="mt-3 text-center text-xs text-muted-foreground"> 7-day money back guarantee. </p>
                         </CardContent>
                     </Card>

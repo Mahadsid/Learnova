@@ -3,6 +3,7 @@
 import { requireAdmin } from "@/app/dataAcclyr/admin/require-admin";
 import arcjet, { fixedWindow } from "@/lib/arcjet";
 import { prisma } from "@/lib/db";
+import { stripe } from "@/lib/stripe";
 import { ApiResponse } from "@/lib/types";
 import { courseSchema, CourseSchemaType } from "@/lib/ZodSchema";
 import { request } from "@arcjet/next";
@@ -72,10 +73,22 @@ export async function CreateCourse(values: CourseSchemaType) : Promise<ApiRespon
             };
         }
 
-        const data = await prisma.course.create({
+        //creting productId for each course to save in in DB so that which course is bought we know that, check course stripeProductId for each course in is a field in Course table.
+        const data = await stripe.products.create({
+            name: validation.data.title,
+            description: validation.data.smallDescription,
+            default_price_data: {
+                currency: 'eur',
+                unit_amount: validation.data.price * 100,
+            }
+
+        });
+
+        await prisma.course.create({
             data: {
                 ...validation.data,
                 userId: session?.user.id as string,
+                stripePriceId: data.default_price as string,
             },
         });
         
