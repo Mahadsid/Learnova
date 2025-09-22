@@ -2,13 +2,15 @@ import "server-only";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "./require-admin";
 
-export async function adminGetCourses() {
+export async function adminGetRecentCourses() {
     await requireAdmin();
 
     const data = await prisma.course.findMany({
         orderBy: {
-            createdAt: 'desc'
+            createdAt: "asc"
         },
+        //take only 2 courses, otherwise it will give all course if you have thoudsand it will give you thousand
+        take: 2,
         select: {
             id: true,
             title: true,
@@ -23,7 +25,3 @@ export async function adminGetCourses() {
     });
     return data;
 }
-
-
-// To get dynamic types out of the above function! it returns array! so to get singular item we destructure it by using [0]
-export type AdminCourseType = Awaited<ReturnType<typeof adminGetCourses>>[0]

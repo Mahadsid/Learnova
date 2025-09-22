@@ -1,3 +1,4 @@
+import "server-only";
 import { prisma } from "@/lib/db";
 
 // This is for public seeing courses, we get courses and only published course, sort them with newest created first shown.
