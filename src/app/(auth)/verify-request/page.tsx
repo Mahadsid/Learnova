@@ -6,10 +6,19 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import { authClient } from "@/lib/auth-client";
 import { Loader2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useTransition } from "react";
+import { Suspense, useState, useTransition } from "react";
 import { toast } from "sonner";
 
-export default function VerifyRequest() {
+//in nextjs 15 where ever you use useSearchParams you need to wrap it under suspense boundary, so we make new function make it suspense and wrap our original function in it.
+export default function VerifyRequestRoute() {
+    return (
+        <Suspense>
+            <VerifyRequest />
+        </Suspense>
+    )
+}
+
+function VerifyRequest() {
     //router bcz client comp
     const router = useRouter();
 

@@ -15,63 +15,63 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-import { cursorTo } from "readline"
+
 
 export const description = "An interactive area chart"
 
-const dummyEnrollmentData = [
-  {
-    date: '2025-09-22', enrollments: 12,
-  },
-  {
-    date: '2025-09-23', enrollments: 23,
-  },
-  {
-    date: '2025-09-24', enrollments: 15,
-  },
-  {
-    date: '2025-09-25', enrollments: 16,
-  },
-  {
-    date: '2025-09-26', enrollments: 25,
-  },
-  {
-    date: '2025-09-27', enrollments: 6,
-  },
-  {
-    date: '2025-09-28', enrollments: 23,
-  },
-  {
-    date: '2025-09-29', enrollments: 2,
-  },
-  {
-    date: '2025-09-30', enrollments: 15,
-  },
-  {
-    date: '2025-10-1', enrollments: 22,
-  },
-  {
-    date: '2025-10-2', enrollments: 14,
-  },
-  {
-    date: '2025-10-3', enrollments: 9,
-  },
-  {
-    date: '2025-10-4', enrollments: 10,
-  },
-  {
-    date: '2025-10-5', enrollments: 5,
-  },
-  {
-    date: '2025-10-6', enrollments: 32,
-  },
-  {
-    date: '2025-10-7', enrollments: 21,
-  },
-  {
-    date: '2025-10-8', enrollments: 25,
-  },
-]
+// const dummyEnrollmentData = [
+//   {
+//     date: '2025-09-22', enrollments: 12,
+//   },
+//   {
+//     date: '2025-09-23', enrollments: 23,
+//   },
+//   {
+//     date: '2025-09-24', enrollments: 15,
+//   },
+//   {
+//     date: '2025-09-25', enrollments: 16,
+//   },
+//   {
+//     date: '2025-09-26', enrollments: 25,
+//   },
+//   {
+//     date: '2025-09-27', enrollments: 6,
+//   },
+//   {
+//     date: '2025-09-28', enrollments: 23,
+//   },
+//   {
+//     date: '2025-09-29', enrollments: 2,
+//   },
+//   {
+//     date: '2025-09-30', enrollments: 15,
+//   },
+//   {
+//     date: '2025-10-1', enrollments: 22,
+//   },
+//   {
+//     date: '2025-10-2', enrollments: 14,
+//   },
+//   {
+//     date: '2025-10-3', enrollments: 9,
+//   },
+//   {
+//     date: '2025-10-4', enrollments: 10,
+//   },
+//   {
+//     date: '2025-10-5', enrollments: 5,
+//   },
+//   {
+//     date: '2025-10-6', enrollments: 32,
+//   },
+//   {
+//     date: '2025-10-7', enrollments: 21,
+//   },
+//   {
+//     date: '2025-10-8', enrollments: 25,
+//   },
+// ]
 
 const chartConfig = {
   enrollments: {
