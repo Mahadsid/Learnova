@@ -60,8 +60,8 @@ async function authMiddleware(request: NextRequest) {
     // We recommend handling auth checks in each page/route
 	if (!sessionCookie) {
 		return NextResponse.redirect(new URL("/login", request.url));
-	}
-
+  }
+  
 	return NextResponse.next();
 }
 

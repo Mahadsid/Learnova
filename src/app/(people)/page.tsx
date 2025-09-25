@@ -78,10 +78,6 @@ export default function Home() {
                       <Link href='/courses' className={buttonVariants({
                           size: "lg",
                       })}>Start Exploring <ArrowRight/> </Link>
-                      <Link href='/login' className={buttonVariants({
-                          size: "lg",
-                          variant: "outline",
-                      })}>Sign In</Link>
                   </div>
               </div>  
           </section>

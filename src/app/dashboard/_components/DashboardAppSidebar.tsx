@@ -7,7 +7,6 @@ import {
   IconFileAi,
   IconFileDescription,
   IconHelp,
-  IconListDetails,
   IconSearch,
   IconSettings,
 } from "@tabler/icons-react"
@@ -24,7 +23,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import Logo from "../../../public/Logo.png"
+import Logo from "../../../../public/Logo.png"
 import Link from "next/link"
 import Image from "next/image"
 
@@ -33,14 +32,14 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "/admindashboard",
+      url: "/dashboard",
       icon: IconDashboard,
     },
-    {
-      title: "Courses",
-      url: "/admindashboard/courses",
-      icon: IconListDetails,
-    },
+    // {
+    //   title: "New Courses",
+    //   url: "/courses",
+    //   icon: IconListDetails,
+    // },
   ],
   navClouds: [
     {

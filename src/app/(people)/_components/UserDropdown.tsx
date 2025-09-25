@@ -4,6 +4,7 @@ import {
   Home,
   LayoutDashboardIcon,
   LogOutIcon,
+  ShieldUser,
 } from "lucide-react"
 
 import {
@@ -90,9 +91,15 @@ export function UserDropdown({name, email, image}: userDropDownProps) {
                       </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild> 
-                      <Link href='/admindashboard'>
+                      <Link href='/dashboard'>
                           <LayoutDashboardIcon size={16} className="opacity-60" aria-hidden="true" />
             <span>Dashboard</span>
+                      </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild> 
+                      <Link href='/admindashboard'>
+                          <ShieldUser size={16} className="opacity-60" aria-hidden="true" />
+            <span>Admin Dashboard</span>
                       </Link>
           </DropdownMenuItem>
               </DropdownMenuGroup>

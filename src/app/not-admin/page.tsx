@@ -15,7 +15,8 @@ export default function NotAdminRoute() {
                         Access Restricted!
                     </CardTitle>
                     <CardDescription className="max-w-xs mx-auto">
-                        You dont have access privilege for creating a course and more.
+                        You dont have access privilege for creating a course and more admin related tasks. Please Ask <Link href="https://github.com/Mahadsid" className="font-semibold text-primary hover:underline" target="_blank"
+            rel="noopener noreferrer">Muhammad Mahad</Link> for admin rights. Thank you!
                     </CardDescription>
                 </CardHeader>
                 <CardContent>

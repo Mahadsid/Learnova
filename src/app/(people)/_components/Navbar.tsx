@@ -11,7 +11,7 @@ import { UserDropdown } from "./UserDropdown";
 const navigationItems = [
     {name: "Home", href: "/"},
     {name: "Courses", href: "/courses"},
-    {name: "Dashboard", href: "/admindashboard"}
+    {name: "Dashboard", href: "/dashboard"}
 ]
 
 export function Navbar() {
