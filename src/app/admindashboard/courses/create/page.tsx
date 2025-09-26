@@ -76,7 +76,7 @@ export default function CourseCreationPage() {
     return (
         <>
             <div className="flex items-center gap-4">
-                <Link href='admindashboard/courses' className={buttonVariants({ variant: 'outline', size: 'icon' })}><ArrowLeft className="size-4" /></Link>
+                <Link href='/admindashboard/courses' className={buttonVariants({ variant: 'outline', size: 'icon' })}><ArrowLeft className="size-4" /></Link>
                 <h1 className="text-2xl font-bold">Create Courses</h1>
             </div>
             <Card>

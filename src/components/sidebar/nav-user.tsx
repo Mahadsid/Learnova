@@ -86,7 +86,7 @@ export function NavUser() {
                 Home</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href='/admindashboard'><IconDashboard />
+                <Link href='/dashboard'><IconDashboard />
                 Dashboard</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
