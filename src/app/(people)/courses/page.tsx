@@ -2,6 +2,7 @@ import { getAllCourses } from "@/app/dataAcclyr/course/get-all-courses"
 import { PublicCourseCard, PublicCourseCardSkeleton } from "../_components/PublicCourseCard";
 import { Suspense } from "react";
 
+export const dynamic = "force-dynamic";
 
 export default function PublicCoursesRoute() {
     return (
