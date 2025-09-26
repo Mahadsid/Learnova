@@ -5,7 +5,7 @@ import StarterKit from '@tiptap/starter-kit'
 import { Menubar } from './Menubar';
 import TextAlign from "@tiptap/extension-text-align"
 
-export function RichTextEditor({ field }: {field : any}) {
+export function RichTextEditor({ field }: {field : any}) { // eslint-disable-line @typescript-eslint/no-explicit-any
     const editor = useEditor({
         extensions: [
             StarterKit,

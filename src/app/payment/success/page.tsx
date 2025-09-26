@@ -10,6 +10,7 @@ export default function PaymentSuccessful() {
     const { triggerConfetti } = useConfetti();
     useEffect(() => {
         triggerConfetti();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     return (
         <div className="w-full min-h-screen flex flex-1 justify-center items-center">
