@@ -5,6 +5,7 @@ import "./globals.css";
 import { ConsentManagerProvider, CookieBanner, ConsentManagerDialog } from "@c15t/nextjs";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { env } from "@/lib/env";
 
 // Import Roboto with ALL weights
 
@@ -32,9 +33,12 @@ export default function RootLayout({
             {/* Consent Manager */}
     		    <ConsentManagerProvider options={{
     					mode: 'c15t',
-    					backendURL: '/api/c15t',
+    					backendURL: env.NEXT_PUBLIC_C15T_URL,
     					consentCategories: ['necessary', 'marketing'], // Optional: Specify which consent categories to show in the banner. 
-    					ignoreGeoLocation: true, // Useful for development to always view the banner.
+          ignoreGeoLocation: true, // Useful for development to always view the banner.
+          react: {
+                colorScheme: "dark"
+              }
             }}>
             <CookieBanner />
     			  <ConsentManagerDialog />
