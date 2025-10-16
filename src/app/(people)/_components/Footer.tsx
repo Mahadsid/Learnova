@@ -13,7 +13,7 @@ export function Footer() {
 
         {/* Center: Made by */}
         <div>
-          Made with ❤️ by <span className="font-medium">Muhammad Mahad</span>
+          Made with ❤️ by <a href="https://mahadsid.github.io/portfolio/" className="font-medium hover:underline" target="_blank">Muhammad Mahad</a>
         </div>
 
         {/* Right: GitHub link */}
