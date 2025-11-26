@@ -1,4 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌌 Learnova — Modern LMS Platform
+
+Learnova is a **next-generation Learning Management System (LMS)** built with **TypeScript**, **Next.js 15**, and a fully modern cloud architecture.  
+It is engineered for **speed**, **security**, **scalability**, and **beautiful user experience** — enabling creators and learners to connect through structured, interactive courses.
+
+🚀 **Live Preview:**  
+👉 [Learnova](https://learnova-eight.vercel.app/)  
+📦 **Source Code:**  
+👉 [Learnova GitHub Repository](https://github.com/Mahadsid/learnova)
+
+---
+
+## ✨ Core Features
+
+### 🎓 Complete LMS Functionality
+- Role-based system — **Admins** manage courses, **Users** learn.
+- Course creation, editing, lessons, modules & structure.
+- Drag-and-drop course builder.
+- Rich-text editor for lesson content.
+
+### 📊 Modern Dashboards
+- **Admin Dashboard:** Manage courses, media, pricing & analytics.
+- **Customer Dashboard:** Track progress, continue learning, view purchased courses.
+
+### 📺 Advanced Media Handling
+- Custom video player with **Tigris S3 streaming**.
+- Drag-and-drop upload component.
+- Secure uploads via presigned URLs.
+
+### 🔒 Secure & Production-Ready
+- Protected by **Arcjet Security** (XSS, SQL injection, bot mitigation).
+- Rate limiting to prevent abuse.
+- Better-Auth (Email OTP + GitHub OAuth).
+
+### 💰 Monetization & Payments
+- Stripe integration for payments.
+- Automated checkout, invoicing & subscription logic.
+
+### 🧠 Clean Architecture
+- Modular folder structure.
+- DAL (Data Access Layer) implemented for maintainability.
+- Prisma ORM for type-safe database access.
+
+---
+
+## 🧩 Tech Stack
+
+| Layer | Tools & Technologies |
+|-------|-----------------------|
+| **Framework** | Next.js 15, TypeScript |
+| **Styling** | Tailwind CSS, Shadcn UI |
+| **Authentication** | Better-Auth (OTP + OAuth) |
+| **Database** | Neon Postgres |
+| **ORM** | Prisma |
+| **Storage** | Tigris S3 |
+| **Payments** | Stripe |
+| **Security** | Arcjet |
+| **Deployments** | Vercel |
+
+---
+
+## 🚀 Getting Started
+
+Clone the repository:
+
+```bash
+git clone https://github.com/yourusername/learnova.git
+cd learnova
+
 
 ## Getting Started
 
