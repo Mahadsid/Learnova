@@ -1,6 +1,6 @@
 # 🌌 Learnova — Modern LMS Platform
 
-Learnova is a **next-generation Learning Management System (LMS)** built with **TypeScript**, **Next.js 15**, and a fully modern cloud architecture.  
+Learnova is a **next-generation Learning Management System (LMS)** built with **TypeScript**, **Next.js 15**, and a fully modern vertical scaling architecture.  
 It is engineered for **speed**, **security**, **scalability**, and **beautiful user experience** — enabling creators and learners to connect through structured, interactive courses.
 
 🚀 **Live Preview:**  
